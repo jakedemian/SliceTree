@@ -1,0 +1,28 @@
+<%-- HIGH LEVEL IMPORTS AND META INCLUDES --%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<%-- CLASS IMPORTS --%>
+<%@page import="com.slicetree.users.user.UserLogonSessionHelper" %>
+
+<%-- CHECK IF A USER IS LOGGED IN --%>
+<%
+	UserLogonSessionHelper logonHelper = new UserLogonSessionHelper(request);
+	
+	String userType = "G"; // Guest, default
+	Boolean userLoggedOn = false; // default to false
+	
+	if(logonHelper.isUserLoggedIn()){
+		// TODO more logic here eventually for figuring out exact user type
+		userType = "U"; // 
+		userLoggedOn = true;
+	}
+	
+	
+%>
+
+<%-- SET ALL GLOBAL PAGE VARS --%>
+<%
+	pageContext.setAttribute("userType", userType);
+	pageContext.setAttribute("userLoggedOn", userLoggedOn);
+%>
