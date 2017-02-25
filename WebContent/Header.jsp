@@ -8,11 +8,7 @@
 			<a href="./Logout">Logout</a>
 		</c:when>
 		<c:otherwise>
-			<form id="loginForm" method="post" action="./Login">
-				<input type="text" name="email" placeholder="Email" />
-				<input type="password" name="password" placeholder="Password" />
-				<input type="submit" value="submit"/>
-			</form>
+			<a href="./SignUp">Create Account</a>
 		</c:otherwise>
 	</c:choose>
 </div>

@@ -6,11 +6,11 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link rel="stylesheet" type="text/css" href="./assets/css/normalize.css">
+	<link rel="stylesheet" type="text/css" href="./assets/css/main.css">
 	<title>Dashboard</title>
 </head>
 <body>
 	<c:import url="./Header.jsp" />		
-	<h1>SliceTree</h1>
+	<h1>Dashboard</h1>
 </body>
 </html>
