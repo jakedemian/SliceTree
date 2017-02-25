@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.slicetree.common.logging.LogLevel;
 import com.slicetree.common.logging.LoggingHelper;
 import com.slicetree.users.user.UserLogonSessionHelper;
 
@@ -20,16 +21,20 @@ public abstract class SliceTreeServlet extends HttpServlet {
 	private LoggingHelper logger = new LoggingHelper();
 	private final String CLASSNAME = getClass().getCanonicalName();
 
+	// enforceUserLogonStatus() values for requiredLogonStatus
 	protected final boolean MUST_BE_LOGGED_IN = true;
 	protected final boolean MUST_NOT_BE_LOGGED_IN = false;
 
+	// true if this servlet has already committed a response
 	protected boolean responseWasAlreadyCommitted = false;
 
+	// the action to take after doWork()
+	protected Integer FORWARD_ACTION = null;
+
+	// FIXME make this a class or something. like ForwardAction
+	// possible values for FORWARD_ACTION
 	protected final int FORWARD_ACTION_REQUEST_FORWARD = 1;
 	protected final int FORWARD_ACTION_RESPONSE_REDIRECT = 2;
-
-	protected int FORWARD_ACTION = FORWARD_ACTION_REQUEST_FORWARD; // default to
-																	// reqDispatcher.forward()
 
 	/**
 	 * Force a particular logon state to view this servlet's jsp.
@@ -94,19 +99,54 @@ public abstract class SliceTreeServlet extends HttpServlet {
 		logger.exiting(CLASSNAME, METHODNAME);
 	}
 
+	/**
+	 * Forward this request via either a request forward() or a response
+	 * sendRedirect()
+	 * 
+	 * @param target
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
 	protected void doForwardAction(String target, HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		if (FORWARD_ACTION == FORWARD_ACTION_REQUEST_FORWARD) {
-			request.getRequestDispatcher(target).forward(request, response);
+		final String METHODNAME = "doForwardAction";
+		logger.entering(CLASSNAME, METHODNAME);
+
+		if (FORWARD_ACTION != null) {
+			if (FORWARD_ACTION == FORWARD_ACTION_REQUEST_FORWARD) {
+				request.getRequestDispatcher(target).forward(request, response);
+			} else {
+				response.sendRedirect(target);
+			}
 		} else {
-			response.sendRedirect(target);
+			logger.log(LogLevel.ERROR, CLASSNAME, METHODNAME,
+					"Attempted to invoke doForwardAction() without first setting FORWARD_ACTION.");
+			throw new ServletException();
 		}
+
+		logger.exiting(CLASSNAME, METHODNAME);
 	}
 
 	/**
+	 * Perform the core work of the servlet. This is automatically called after
+	 * enforceUserLogonStatus() if the response was not committed. All children
+	 * of this class must implement this method.
 	 * 
 	 * @param request
 	 * @param response
 	 */
 	abstract protected void doWork(HttpServletRequest request, HttpServletResponse response);
+
+	/**
+	 * Set the forward action for this servlet
+	 * 
+	 * @param action
+	 *            FORWARD_ACTION_REQUEST_FORWARD
+	 *            FORWARD_ACTION_RESPONSE_REDIRECT
+	 */
+	protected void setForwardAction(Integer action) {
+		this.FORWARD_ACTION = action;
+	}
 }

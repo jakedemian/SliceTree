@@ -13,10 +13,10 @@ import com.slicetree.servlets.jspservlets.SliceTreeServlet;
 import com.slicetree.users.user.UserLogonSessionHelper;
 
 /**
- * Servlet implementation class LogoutServlet
+ * Servlet implementation class LogoutService
  */
 @WebServlet("/Logout")
-public class LogoutServlet extends SliceTreeServlet {
+public class LogoutService extends SliceTreeServlet {
 	private static final long serialVersionUID = 1L;
 	private LoggingHelper logger = new LoggingHelper();
 	private final String CLASSNAME = getClass().getCanonicalName();
@@ -29,21 +29,21 @@ public class LogoutServlet extends SliceTreeServlet {
 			throws ServletException, IOException {
 		final String METHODNAME = "doGet";
 		logger.entering(CLASSNAME, METHODNAME);
-
-		try {
-			UserLogonSessionHelper logonHelper = new UserLogonSessionHelper(request);
-			if (logonHelper.isUserLoggedIn()) {
-				logonHelper.logout();
-			}
-			response.sendRedirect("Home");
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-
+		enforceUserLogonStatus(MUST_BE_LOGGED_IN, "Home", request, response);
+		setForwardAction(FORWARD_ACTION_RESPONSE_REDIRECT);
+		dispatchRequest("Home", request, response);
 		logger.exiting(CLASSNAME, METHODNAME);
 	}
 
 	// TODO make a separate class for servlet services so i dont have to do this
 	protected void doWork(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			UserLogonSessionHelper logonHelper = new UserLogonSessionHelper(request);
+			if (logonHelper.isUserLoggedIn()) {
+				logonHelper.logout();
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 	}
 }

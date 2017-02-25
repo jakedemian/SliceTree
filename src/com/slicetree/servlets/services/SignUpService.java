@@ -44,12 +44,12 @@ public class SignUpService extends SliceTreeServlet {
 		String password = request.getParameter("password");
 		String confPass = request.getParameter("confirm-password");
 
-		FORWARD_ACTION = FORWARD_ACTION_RESPONSE_REDIRECT;
+		setForwardAction(FORWARD_ACTION_RESPONSE_REDIRECT);
 		if (paramNotNull(firstName) && paramNotNull(lastName) && paramNotNull(email)
 				&& paramNotNull(password) && paramNotNull(confPass)) {
 			if (password.toString().equals(confPass.toString())) {
 				isValid = true;
-				FORWARD_ACTION = FORWARD_ACTION_REQUEST_FORWARD;
+				setForwardAction(FORWARD_ACTION_REQUEST_FORWARD);
 			}
 		}
 

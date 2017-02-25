@@ -31,7 +31,7 @@ public class DashboardServlet extends SliceTreeServlet {
 		logger.entering(CLASSNAME, METHODNAME);
 		enforceUserLogonStatus(MUST_BE_LOGGED_IN, INCORRECT_LOGON_STATE_REDIRECT_SERVLET_NAME,
 				request, response);
-
+		setForwardAction(FORWARD_ACTION_REQUEST_FORWARD);
 		dispatchRequest(JSP_REDIRECT_PATH, request, response);
 		logger.exiting(CLASSNAME, METHODNAME);
 	}

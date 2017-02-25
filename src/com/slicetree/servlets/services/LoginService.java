@@ -16,10 +16,10 @@ import com.slicetree.servlets.jspservlets.SliceTreeServlet;
 import com.slicetree.users.user.UserLogonSessionHelper;
 
 /**
- * Servlet implementation class LoginServlet
+ * Servlet implementation class LoginService
  */
 @WebServlet("/Login")
-public class LoginServlet extends SliceTreeServlet implements Servlet {
+public class LoginService extends SliceTreeServlet implements Servlet {
 	private static final long serialVersionUID = 1L;
 	private LoggingHelper logger = new LoggingHelper();
 	private final String CLASSNAME = getClass().getCanonicalName();
@@ -32,6 +32,14 @@ public class LoginServlet extends SliceTreeServlet implements Servlet {
 			throws ServletException, IOException {
 		final String METHODNAME = "doPost";
 		logger.entering(CLASSNAME, METHODNAME);
+		enforceUserLogonStatus(MUST_NOT_BE_LOGGED_IN, "Dashboard", request, response);
+		setForwardAction(FORWARD_ACTION_RESPONSE_REDIRECT);
+		dispatchRequest("Dashboard", request, response);
+		logger.exiting(CLASSNAME, METHODNAME);
+	}
+
+	// TODO make a separate class for servlet services so i dont have to do this
+	protected void doWork(HttpServletRequest request, HttpServletResponse response) {
 
 		String email = request.getParameter("email");
 		String pass = request.getParameter("password");
@@ -46,13 +54,7 @@ public class LoginServlet extends SliceTreeServlet implements Servlet {
 				e.printStackTrace();
 			}
 		}
-		response.sendRedirect("Home");
 
-		logger.exiting(CLASSNAME, METHODNAME);
-	}
-
-	// TODO make a separate class for servlet services so i dont have to do this
-	protected void doWork(HttpServletRequest request, HttpServletResponse response) {
 	}
 
 }
