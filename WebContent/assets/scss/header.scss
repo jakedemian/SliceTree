@@ -1,0 +1,25 @@
+@import "vars";
+
+#header{
+	width: 100%; 
+	height: 35px; 
+	background-color: $primary-color; 
+	color: white;
+	
+	a{
+		color: white;
+		text-decoration: none;
+		margin: 10px;
+		float: right;
+		
+		&:hover{
+			text-decoration: underline;
+		}
+	}
+	
+	#loginForm{
+		font-family: 'Lato', sans-serif;
+		margin: 5px;
+		float: right;
+	}
+}
