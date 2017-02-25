@@ -51,4 +51,8 @@ public class LoginServlet extends SliceTreeServlet implements Servlet {
 		logger.exiting(CLASSNAME, METHODNAME);
 	}
 
+	// TODO make a separate class for servlet services so i dont have to do this
+	protected void doWork(HttpServletRequest request, HttpServletResponse response) {
+	}
+
 }

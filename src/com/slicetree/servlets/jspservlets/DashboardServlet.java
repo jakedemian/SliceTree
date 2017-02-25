@@ -29,21 +29,14 @@ public class DashboardServlet extends SliceTreeServlet {
 			throws ServletException, IOException {
 		final String METHODNAME = "doGet";
 		logger.entering(CLASSNAME, METHODNAME);
-
-		// try {
-		// UserLogonSessionHelper test = new UserLogonSessionHelper(request);
-		// test.logout();
-		// } catch (Throwable e) {
-		// }
-
 		enforceUserLogonStatus(MUST_BE_LOGGED_IN, INCORRECT_LOGON_STATE_REDIRECT_SERVLET_NAME,
 				request, response);
 
-		// TODO work here
-
 		dispatchRequest(JSP_REDIRECT_PATH, request, response);
-
 		logger.exiting(CLASSNAME, METHODNAME);
 	}
 
+	protected void doWork(HttpServletRequest request, HttpServletResponse response) {
+
+	}
 }

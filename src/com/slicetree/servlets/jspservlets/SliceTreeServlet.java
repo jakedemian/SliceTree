@@ -15,7 +15,7 @@ import com.slicetree.users.user.UserLogonSessionHelper;
 /**
  * Servlet implementation class SliceTreeServlet
  */
-public class SliceTreeServlet extends HttpServlet {
+public abstract class SliceTreeServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private LoggingHelper logger = new LoggingHelper();
 	private final String CLASSNAME = getClass().getCanonicalName();
@@ -24,6 +24,12 @@ public class SliceTreeServlet extends HttpServlet {
 	protected final boolean MUST_NOT_BE_LOGGED_IN = false;
 
 	protected boolean responseWasAlreadyCommitted = false;
+
+	protected final int FORWARD_ACTION_REQUEST_FORWARD = 1;
+	protected final int FORWARD_ACTION_RESPONSE_REDIRECT = 2;
+
+	protected int FORWARD_ACTION = FORWARD_ACTION_REQUEST_FORWARD; // default to
+																	// reqDispatcher.forward()
 
 	/**
 	 * Force a particular logon state to view this servlet's jsp.
@@ -40,7 +46,7 @@ public class SliceTreeServlet extends HttpServlet {
 	 * @throws NamingException
 	 * @throws SQLException
 	 */
-	public void enforceUserLogonStatus(boolean requiredLogonStatus, String redirectServletId,
+	protected void enforceUserLogonStatus(boolean requiredLogonStatus, String redirectServletId,
 			HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		final String METHODNAME = "enforceUserLogonStatus";
@@ -56,16 +62,29 @@ public class SliceTreeServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 
+		if (!responseWasAlreadyCommitted) {
+			doWork(request, response);
+		}
+
 		logger.exiting(CLASSNAME, METHODNAME);
 	}
 
-	public void dispatchRequest(String jspName, HttpServletRequest request,
+	/**
+	 * Dispatch the request if the response has not already been committed.
+	 * 
+	 * @param jspName
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	protected void dispatchRequest(String target, HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		final String METHODNAME = "dispatchRequest";
 		logger.entering(CLASSNAME, METHODNAME);
 
 		if (!responseWasAlreadyCommitted) {
-			request.getRequestDispatcher(jspName).forward(request, response);
+			doForwardAction(target, request, response);
 		}
 
 		// have to reset this otherwise it's "true" value will be preserved
@@ -74,4 +93,20 @@ public class SliceTreeServlet extends HttpServlet {
 
 		logger.exiting(CLASSNAME, METHODNAME);
 	}
+
+	protected void doForwardAction(String target, HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		if (FORWARD_ACTION == FORWARD_ACTION_REQUEST_FORWARD) {
+			request.getRequestDispatcher(target).forward(request, response);
+		} else {
+			response.sendRedirect(target);
+		}
+	}
+
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	abstract protected void doWork(HttpServletRequest request, HttpServletResponse response);
 }

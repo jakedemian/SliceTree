@@ -10,25 +10,13 @@
 </head>
 <body>
 	<c:import url="./Header.jsp" />		
-	<h1>SliceTree</h1>
-	
+	<h1>SliceTree</h1>	
 	<h3>Log In</h3>
-	
-	<!-- <form action="SignUp" method="post">
-		<input type="text" name="email" placeholder="Email" />
-		<input type="password" name="password" placeholder="Password" />
-		<input type="password" name="confirmPassword" placeholder="Confirm Password" />
-		<input type="submit" value="Submit" /> <br />
-	</form> -->
 	
 	<form id="loginForm" method="post" action="./Login">
 		<input type="text" name="email" placeholder="Email" /><br />
 		<input type="password" name="password" placeholder="Password" /><br />
 		<input type="submit" value="submit"/><br />
 	</form>
-	
-	<c:if test="${ !empty param['empty_input'] && param['empty_input'] == 1 }">
-		<p>You forgot to type something ya dingus.</p>
-	</c:if>
 </body>
 </html>

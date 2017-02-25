@@ -19,12 +19,8 @@ public class IndexServlet extends SliceTreeServlet {
 	private final String CLASSNAME = getClass().getCanonicalName();
 	private LoggingHelper logger = new LoggingHelper();
 
-	private final String JSP_REDIRECT_PATH = "index.jsp";
 	private final String INCORRECT_LOGON_STATE_REDIRECT_SERVLET_NAME = "Dashboard";
-
-	public IndexServlet() {
-		super();
-	}
+	private final String JSP_REDIRECT_PATH = "index.jsp";
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -32,10 +28,12 @@ public class IndexServlet extends SliceTreeServlet {
 		logger.entering(CLASSNAME, METHODNAME);
 		enforceUserLogonStatus(MUST_NOT_BE_LOGGED_IN, INCORRECT_LOGON_STATE_REDIRECT_SERVLET_NAME,
 				request, response);
-
-		// TODO work here
-
+		FORWARD_ACTION = FORWARD_ACTION_REQUEST_FORWARD;
 		dispatchRequest(JSP_REDIRECT_PATH, request, response);
 		logger.exiting(CLASSNAME, METHODNAME);
+	}
+
+	protected void doWork(HttpServletRequest request, HttpServletResponse response) {
+
 	}
 }

@@ -9,7 +9,7 @@ public class LoggingHelper {
 
 	private void initCurrentLogLevel() {
 		// TODO
-		currentLogLevel = 4;
+		currentLogLevel = 2;
 	}
 
 	private String getDateTimeString() {
