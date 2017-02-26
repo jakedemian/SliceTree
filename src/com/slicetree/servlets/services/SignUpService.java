@@ -1,6 +1,8 @@
 package com.slicetree.servlets.services;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,8 +10,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.slicetree.common.logging.LogLevel;
 import com.slicetree.common.logging.LoggingHelper;
+import com.slicetree.db.helpers.UserHelper;
 import com.slicetree.servlets.jspservlets.SliceTreeServlet;
+import com.slicetree.users.user.UserLogonSessionHelper;
 
 /**
  * Servlet implementation class SignUpService
@@ -44,6 +49,11 @@ public class SignUpService extends SliceTreeServlet {
 		String password = request.getParameter("password");
 		String confPass = request.getParameter("confirm-password");
 
+		// TODO FIXME still need to do more validation. is the password long
+		// enough? does it meet baseline password strength benchmarks? is the
+		// email in the correct format? does the email exist in the database
+		// already?
+
 		setForwardAction(FORWARD_ACTION_RESPONSE_REDIRECT);
 		if (paramNotNull(firstName) && paramNotNull(lastName) && paramNotNull(email)
 				&& paramNotNull(password) && paramNotNull(confPass)) {
@@ -60,36 +70,63 @@ public class SignUpService extends SliceTreeServlet {
 		return o != null;
 	}
 
-	// TODO
-	/*
-	 * for now SliceTreeServlet is in a decent enough state to handle all types
-	 * of different request/response types and paths. I just need to remember
-	 * (and maybe make cleaner) the method of setting the forward action type.
-	 * but for now i'm good and i can continue with the logic in this doWork and
-	 * try to finish the Sign Up process. I still need to hash out how to create
-	 * an organization, what to do if they cancel it, etc etc
-	 */
-	// TODO
-	protected void doWork(HttpServletRequest request, HttpServletResponse response) {
+	protected void doWork(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException {
 		if (validateParameters(request)) {
-			String firstName = request.getParameter("first-name").toString();
-			String lastName = request.getParameter("last-name").toString();
-			String email = request.getParameter("email").toString();
-			String password = request.getParameter("password").toString();
-			String confPass = request.getParameter("confirm-password").toString();
+			Map<String, Object> formParams = new HashMap<String, Object>();
+			formParams.put("firstName", request.getParameter("first-name").toString());
+			formParams.put("lastName", request.getParameter("last-name").toString());
+			formParams.put("email", request.getParameter("email").toString());
+			formParams.put("password", request.getParameter("password").toString());
 
-			Object[] signupParams = { firstName, lastName, email, password, confPass };
-			request.setAttribute("signupParams", signupParams);
+			// create the user
+			createUser(formParams, request);
 
-			if (request.getParameter("setup-org") != null) {
-				redirectServlet = "CreateOrganizationService";
-				// TODO more here
-			} else {
-				redirectServlet = "SetupComplete";
-			}
+			// we want a response redirect here because this a post and we want
+			// the next page loaded as a get
+			setForwardAction(FORWARD_ACTION_RESPONSE_REDIRECT);
+
+			redirectServlet = "SignUpComplete";
 		} else {
 			redirectServlet = "SignUp";
 		}
+	}
+
+	private boolean createUser(Map<String, Object> params, HttpServletRequest request)
+			throws ServletException {
+		final String METHODNAME = "createUser";
+		logger.entering(CLASSNAME, METHODNAME, params);
+
+		boolean success = false;
+		try {
+			UserHelper userHelper = new UserHelper();
+
+			// TODO not sure what to do with org id here
+			// i THINK allowing it to be null in the DB is cleaner than forcing
+			// it to not null, but then oddly set it to -1 if no org assigned
+			// yet.
+
+			// also, if a user has no org their dashboard should be empty, with
+			// a string telling them to either create or join an organization
+			userHelper.createUser(params.get("email").toString(), params.get("password").toString(),
+					params.get("firstName").toString(), params.get("lastName").toString(), "U",
+					Long.valueOf(-1));
+
+			UserLogonSessionHelper logonHelper = new UserLogonSessionHelper(request);
+			logonHelper.login(params.get("email").toString(), params.get("password").toString());
+
+			if (logonHelper.isUserLoggedIn()) {
+				success = true;
+			} else {
+				logger.log(LogLevel.WARN, CLASSNAME, METHODNAME,
+						"User was created but not logged in successfully.");
+			}
+		} catch (Throwable e) {
+			throw new ServletException(e);
+		}
+
+		logger.exiting(CLASSNAME, METHODNAME, success);
+		return success;
 	}
 
 }

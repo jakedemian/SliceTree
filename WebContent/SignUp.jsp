@@ -22,7 +22,6 @@
 				<input type="password" name="confirm-password" placeholder="Confirm" required/><br />
 				<input type="submit" name="submit" value="Continue" /><br />
 				<br />
-				<input type="checkbox" name="setup-org" /> I would also like to create a new organization.
 			</form>
 		</div>
 	</div>

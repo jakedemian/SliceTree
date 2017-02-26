@@ -137,7 +137,8 @@ public abstract class SliceTreeServlet extends HttpServlet {
 	 * @param request
 	 * @param response
 	 */
-	abstract protected void doWork(HttpServletRequest request, HttpServletResponse response);
+	abstract protected void doWork(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException;
 
 	/**
 	 * Set the forward action for this servlet

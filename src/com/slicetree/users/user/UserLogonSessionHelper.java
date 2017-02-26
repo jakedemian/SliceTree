@@ -6,6 +6,8 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.slicetree.common.logging.LogLevel;
 import com.slicetree.common.logging.LoggingHelper;
 import com.slicetree.db.helpers.UserCredentialsHelper;
@@ -29,7 +31,7 @@ public class UserLogonSessionHelper {
 
 		boolean loginSuccessful = userCredentialsHelper.verifyUserCredentials(email, password);
 		if (loginSuccessful) {
-			setLoggedInUserId(userCredentialsHelper.getVerifiedUserId());
+			setLoggedInUserEmail(userCredentialsHelper.getVerifiedUserEmail());
 		}
 
 		LOGGER.exiting(CLASSNAME, METHODNAME);
@@ -39,7 +41,7 @@ public class UserLogonSessionHelper {
 		final String METHODNAME = "logout";
 		LOGGER.entering(CLASSNAME, METHODNAME);
 
-		if (getLoggedInUserId() != null) {
+		if (getLoggedInUserEmail() != null) {
 			removeLoggedInUserId();
 		}
 
@@ -52,7 +54,7 @@ public class UserLogonSessionHelper {
 
 		boolean isUserLoggedIn = false;
 
-		if (getLoggedInUserId() != null && getLoggedInUserId() > 0) {
+		if (StringUtils.isNotBlank(getLoggedInUserEmail())) {
 			isUserLoggedIn = true;
 		} else {
 			// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
@@ -71,14 +73,13 @@ public class UserLogonSessionHelper {
 	 * 
 	 * @return The user's userId, or null if noone logged in.
 	 */
-	public Long getLoggedInUserId() {
+	public String getLoggedInUserEmail() {
 		final String METHODNAME = "getLoggedInUserId";
 		LOGGER.entering(CLASSNAME, METHODNAME);
 
-		Long loggedInUserId = null;
+		String loggedInUserId = null;
 		if (session.getAttribute(LOGGED_IN_USER_SESSION_KEY) != null) {
-			loggedInUserId =
-					Long.valueOf(session.getAttribute(LOGGED_IN_USER_SESSION_KEY).toString());
+			loggedInUserId = session.getAttribute(LOGGED_IN_USER_SESSION_KEY).toString();
 		}
 
 		LOGGER.exiting(CLASSNAME, METHODNAME, loggedInUserId);
@@ -91,16 +92,16 @@ public class UserLogonSessionHelper {
 	 * @param userId
 	 *            The userId if the new user that is logged in.
 	 */
-	private void setLoggedInUserId(Long userId) {
+	private void setLoggedInUserEmail(String userEmail) {
 		final String METHODNAME = "setLoggedInUserId";
-		LOGGER.entering(CLASSNAME, METHODNAME, userId);
+		LOGGER.entering(CLASSNAME, METHODNAME, userEmail);
 
-		if (userId != null && userId > 0) {
-			session.setAttribute(LOGGED_IN_USER_SESSION_KEY, userId);
+		if (StringUtils.isNotBlank(userEmail)) {
+			session.setAttribute(LOGGED_IN_USER_SESSION_KEY, userEmail);
 		} else {
 			LOGGER.log(LogLevel.WARN, CLASSNAME, METHODNAME,
-					"Cannot set logged in user with null userId or userId <= 0. "
-							+ "Passed in userId value was: " + userId);
+					"Cannot set logged in user with blank user email. "
+							+ "Passed in user email value was: " + userEmail);
 		}
 		LOGGER.exiting(CLASSNAME, METHODNAME);
 	}

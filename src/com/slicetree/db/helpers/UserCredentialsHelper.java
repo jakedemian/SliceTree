@@ -31,16 +31,14 @@ public class UserCredentialsHelper extends DatabaseHelper {
 	// The minimum recommended cost, used by default
 	public static final int DEFAULT_COST = 16;
 
-	// TODO investigate PBKDF2WithHmacSHA512, or other options
-	// other algs could be a bit better/more secure
+	// TODO investigate SHA256, or other options
 	private static final String ALGORITHM = "PBKDF2WithHmacSHA1";
-
-	private Long verifiedUserId = null;
-
 	private static final int SIZE = 128;
 	private static final Pattern layout = Pattern.compile("\\$31\\$(\\d\\d?)\\$(.{43})");
 	private final SecureRandom random;
 	private final int cost;
+
+	private String verifiedUserEmail = null;
 
 	public UserCredentialsHelper() throws NamingException, SQLException {
 		this(DEFAULT_COST);
@@ -71,11 +69,11 @@ public class UserCredentialsHelper extends DatabaseHelper {
 	 * @throws SQLException
 	 * @throws NamingException
 	 */
-	public void createUserCredentials(String email, String password, Integer userId)
+	public void createUserCredentials(String email, String password)
 			throws SQLException, NamingException {
 		String hash = hashPassword(password.toCharArray());
-		String sql = "INSERT INTO usercredentials (email,hash,user_id) VALUES (?,?,?);";
-		Object[] params = { email, hash, userId };
+		String sql = "INSERT INTO usercredentials (email,hash) VALUES (?,?);";
+		Object[] params = { email, hash };
 
 		this.execute(sql, params);
 	}
@@ -141,11 +139,13 @@ public class UserCredentialsHelper extends DatabaseHelper {
 		if (userCredentials != null && userCredentials.size() == 1) {
 			Map userCredsRow = (Map) userCredentials.get(0);
 			String storedUserHash = (String) userCredsRow.get("hash");
-			if (StringUtils.isNotBlank(storedUserHash)) {
+			String storedUserEmail = (String) userCredsRow.get("email");
+			if (StringUtils.isNotBlank(storedUserHash)
+					&& StringUtils.isNoneBlank(storedUserEmail)) {
 				res = authenticatePassword(password.toCharArray(), storedUserHash);
-
-				// if we have a successful verify, store the userId
-				verifiedUserId = res ? Long.valueOf(userCredsRow.get("user_id").toString()) : null;
+				if (res) {
+					verifiedUserEmail = storedUserEmail;
+				}
 			} else {
 				logger.log(LogLevel.WARN, CLASSNAME, METHODNAME,
 						"Problem occurred with " + "retreiving stored user hash from database "
@@ -160,10 +160,8 @@ public class UserCredentialsHelper extends DatabaseHelper {
 		}
 
 		// TODO Should I execute some sort of thread "wait" here to slow a user
-		// down when
-		// verifying credentials? doing a 1 or 2 second wait here would
-		// drastically
-		// improve brute force security
+		// down when verifying credentials? doing a 1 or 2 second wait here
+		// would drastically improve brute force security
 
 		logger.exiting(CLASSNAME, METHODNAME);
 		return res;
@@ -224,8 +222,8 @@ public class UserCredentialsHelper extends DatabaseHelper {
 		}
 	}
 
-	public Long getVerifiedUserId() {
-		return this.verifiedUserId;
+	public String getVerifiedUserEmail() {
+		return this.verifiedUserEmail;
 	}
 
 }
