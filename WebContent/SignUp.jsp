@@ -23,7 +23,11 @@
 				<input type="submit" name="submit" value="Continue" /><br />
 				<br />
 			</form>
+			<c:if test="${ !empty createUserError }">
+				<p style="color: red;"><c:out value="${ createUserError }" /></p>
+			</c:if>
 		</div>
+		Already have an account? Go home and <a href="Home">Log In</a>.
 	</div>
 </body>
 </html>

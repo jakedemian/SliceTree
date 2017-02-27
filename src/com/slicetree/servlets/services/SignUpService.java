@@ -1,6 +1,7 @@
 package com.slicetree.servlets.services;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class SignUpService extends SliceTreeServlet {
 		logger.entering(CLASSNAME, METHODNAME);
 		enforceUserLogonStatus(MUST_NOT_BE_LOGGED_IN, "Dashboard", request, response);
 
-		dispatchRequest(redirectServlet, request, response);
+		dispatch(redirectServlet, request, response);
 		logger.exiting(CLASSNAME, METHODNAME);
 	}
 
@@ -54,12 +55,12 @@ public class SignUpService extends SliceTreeServlet {
 		// email in the correct format? does the email exist in the database
 		// already?
 
-		setForwardAction(FORWARD_ACTION_RESPONSE_REDIRECT);
+		setForwardAction(FA_RESPONSE_REDIRECT);
 		if (paramNotNull(firstName) && paramNotNull(lastName) && paramNotNull(email)
 				&& paramNotNull(password) && paramNotNull(confPass)) {
 			if (password.toString().equals(confPass.toString())) {
 				isValid = true;
-				setForwardAction(FORWARD_ACTION_REQUEST_FORWARD);
+				setForwardAction(FA_REQUEST_FORWARD);
 			}
 		}
 
@@ -80,13 +81,18 @@ public class SignUpService extends SliceTreeServlet {
 			formParams.put("password", request.getParameter("password").toString());
 
 			// create the user
-			createUser(formParams, request);
+			boolean success = createUser(formParams, request);
 
-			// we want a response redirect here because this a post and we want
-			// the next page loaded as a get
-			setForwardAction(FORWARD_ACTION_RESPONSE_REDIRECT);
-
-			redirectServlet = "SignUpComplete";
+			if (success) {
+				// we want a response redirect here because this a post and we
+				// want
+				// the next page loaded as a get
+				setForwardAction(FA_RESPONSE_REDIRECT);
+				redirectServlet = "SignUpComplete";
+			} else {
+				setForwardAction(FA_REQUEST_FORWARD);
+				redirectServlet = "SignUp";
+			}
 		} else {
 			redirectServlet = "SignUp";
 		}
@@ -121,6 +127,10 @@ public class SignUpService extends SliceTreeServlet {
 				logger.log(LogLevel.WARN, CLASSNAME, METHODNAME,
 						"User was created but not logged in successfully.");
 			}
+		} catch (SQLException s) {
+			success = false;
+			request.setAttribute("createUserError",
+					"That email address is already associated with a SliceTree account.");
 		} catch (Throwable e) {
 			throw new ServletException(e);
 		}

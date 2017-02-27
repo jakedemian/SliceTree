@@ -12,5 +12,16 @@
 <body>
 	<c:import url="./Header.jsp" />		
 	<h1>Dashboard</h1>
+	
+	<c:choose>
+		<c:when test="${ empty orgId or orgId == -1 }">
+			You don't currently belong to an organization.  <br />  
+			You can either <a href="#">create an organization</a>, 
+			or request to <a href="#">join an organization</a>. 
+		</c:when>
+		<c:otherwise>
+			you have an org! now load projects/tasks for this org
+		</c:otherwise>
+	</c:choose>
 </body>
 </html>

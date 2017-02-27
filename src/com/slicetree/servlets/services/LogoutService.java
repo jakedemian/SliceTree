@@ -30,8 +30,8 @@ public class LogoutService extends SliceTreeServlet {
 		final String METHODNAME = "doGet";
 		logger.entering(CLASSNAME, METHODNAME);
 		enforceUserLogonStatus(MUST_BE_LOGGED_IN, "Home", request, response);
-		setForwardAction(FORWARD_ACTION_RESPONSE_REDIRECT);
-		dispatchRequest("Home", request, response);
+		setForwardAction(FA_RESPONSE_REDIRECT);
+		dispatch("Home", request, response);
 		logger.exiting(CLASSNAME, METHODNAME);
 	}
 

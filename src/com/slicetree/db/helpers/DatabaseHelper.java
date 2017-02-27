@@ -32,7 +32,7 @@ public class DatabaseHelper {
 	 * @throws NamingException
 	 * @throws SQLException
 	 */
-	public DatabaseHelper() throws SQLException, NamingException {
+	public DatabaseHelper() {
 		final String METHODNAME = "DatabaseHelper";
 	}
 

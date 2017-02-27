@@ -27,9 +27,14 @@ public class SignUpServlet extends SliceTreeServlet {
 		logger.entering(CLASSNAME, METHODNAME);
 		enforceUserLogonStatus(MUST_NOT_BE_LOGGED_IN, INCORRECT_LOGON_STATE_REDIRECT_SERVLET_NAME,
 				request, response);
-		setForwardAction(FORWARD_ACTION_REQUEST_FORWARD);
-		dispatchRequest(JSP_REDIRECT_PATH, request, response);
+		setForwardAction(FA_REQUEST_FORWARD);
+		dispatch(JSP_REDIRECT_PATH, request, response);
 		logger.exiting(CLASSNAME, METHODNAME);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doGet(request, response);
 	}
 
 	protected void doWork(HttpServletRequest request, HttpServletResponse response) {

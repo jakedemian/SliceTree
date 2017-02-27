@@ -33,8 +33,8 @@ public class LoginService extends SliceTreeServlet implements Servlet {
 		final String METHODNAME = "doPost";
 		logger.entering(CLASSNAME, METHODNAME);
 		enforceUserLogonStatus(MUST_NOT_BE_LOGGED_IN, "Dashboard", request, response);
-		setForwardAction(FORWARD_ACTION_RESPONSE_REDIRECT);
-		dispatchRequest("Dashboard", request, response);
+		setForwardAction(FA_RESPONSE_REDIRECT);
+		dispatch("Dashboard", request, response);
 		logger.exiting(CLASSNAME, METHODNAME);
 	}
 

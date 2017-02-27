@@ -33,8 +33,8 @@ public abstract class SliceTreeServlet extends HttpServlet {
 
 	// FIXME make this a class or something. like ForwardAction
 	// possible values for FORWARD_ACTION
-	protected final int FORWARD_ACTION_REQUEST_FORWARD = 1;
-	protected final int FORWARD_ACTION_RESPONSE_REDIRECT = 2;
+	protected final int FA_REQUEST_FORWARD = 1;
+	protected final int FA_RESPONSE_REDIRECT = 2;
 
 	/**
 	 * Force a particular logon state to view this servlet's jsp.
@@ -83,8 +83,8 @@ public abstract class SliceTreeServlet extends HttpServlet {
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	protected void dispatchRequest(String target, HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	protected void dispatch(String target, HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		final String METHODNAME = "dispatchRequest";
 		logger.entering(CLASSNAME, METHODNAME);
 
@@ -115,10 +115,13 @@ public abstract class SliceTreeServlet extends HttpServlet {
 		logger.entering(CLASSNAME, METHODNAME);
 
 		if (FORWARD_ACTION != null) {
-			if (FORWARD_ACTION == FORWARD_ACTION_REQUEST_FORWARD) {
+			if (FORWARD_ACTION == FA_REQUEST_FORWARD) {
 				request.getRequestDispatcher(target).forward(request, response);
-			} else {
+			} else if (FORWARD_ACTION == FA_RESPONSE_REDIRECT) {
 				response.sendRedirect(target);
+			} else {
+				logger.log(LogLevel.ERROR, CLASSNAME, METHODNAME, "The specified forward action '"
+						+ FORWARD_ACTION + "' is not a valid action.");
 			}
 		} else {
 			logger.log(LogLevel.ERROR, CLASSNAME, METHODNAME,
@@ -144,8 +147,7 @@ public abstract class SliceTreeServlet extends HttpServlet {
 	 * Set the forward action for this servlet
 	 * 
 	 * @param action
-	 *            FORWARD_ACTION_REQUEST_FORWARD
-	 *            FORWARD_ACTION_RESPONSE_REDIRECT
+	 *            FA_REQUEST_FORWARD FA_RESPONSE_REDIRECT
 	 */
 	protected void setForwardAction(Integer action) {
 		this.FORWARD_ACTION = action;
