@@ -1,4 +1,4 @@
-package com.slicetree.servlets.services;
+package com.slicetree.services;
 
 import java.io.IOException;
 import java.sql.SQLException;
