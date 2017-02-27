@@ -18,6 +18,7 @@ import javax.naming.NamingException;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.slicetree.common.constants.SQLConstants;
 import com.slicetree.common.logging.LogLevel;
 import com.slicetree.common.logging.LoggingHelper;
 
@@ -72,7 +73,7 @@ public class UserCredentialsHelper extends DatabaseHelper {
 	public void createUserCredentials(String email, String password)
 			throws SQLException, NamingException {
 		String hash = hashPassword(password.toCharArray());
-		String sql = "INSERT INTO usercredentials (email,hash) VALUES (?,?);";
+		String sql = SQLConstants.CREATE_NEW_USER_CREDENTIALS;
 		Object[] params = { email, hash };
 
 		this.execute(sql, params);
@@ -91,7 +92,7 @@ public class UserCredentialsHelper extends DatabaseHelper {
 	public void updateUserPassword(String email, String password)
 			throws SQLException, NamingException {
 		String hash = hashPassword(password.toCharArray());
-		String sql = "UPDATE usercredentials SET hash=? where email=?;";
+		String sql = SQLConstants.UPDATE_USER_PASSWORD_HASH;
 		String[] params = { hash, email };
 
 		this.execute(sql, params);
@@ -106,7 +107,7 @@ public class UserCredentialsHelper extends DatabaseHelper {
 	 * @throws NamingException
 	 */
 	public void deleteUserCredentials(String email) throws SQLException, NamingException {
-		String sql = "DELETE FROM usercredentials where email=?;";
+		String sql = SQLConstants.DELETE_USER_CREDENTIALS;
 		String[] params = { email };
 
 		this.execute(sql, params);
@@ -132,7 +133,7 @@ public class UserCredentialsHelper extends DatabaseHelper {
 		logger.entering(CLASSNAME, METHODNAME);
 		boolean res = false;
 
-		String sql = "SELECT * FROM usercredentials WHERE email=?";
+		String sql = SQLConstants.SELECT_USER_CREDENTIALS_BY_EMAIL;
 		String[] params = { email };
 		List userCredentials = this.query(sql, params);
 

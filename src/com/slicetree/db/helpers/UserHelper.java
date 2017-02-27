@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
+import com.slicetree.common.constants.SQLConstants;
 import com.slicetree.common.logging.LoggingHelper;
 
 public class UserHelper extends DatabaseHelper {
@@ -36,13 +37,12 @@ public class UserHelper extends DatabaseHelper {
 		// TODO FIXME no validation if the credentials were actually added
 		// successfully or not. fix that.
 
-		String existingUserSql = "SELECT * FROM users WHERE email=?;";
+		String existingUserSql = SQLConstants.SELECT_USERS_BY_EMAIL;
 		String[] params = { email };
 		List<Map<String, Object>> res = this.query(existingUserSql, params);
 		if (res.size() == 0) {
 			// TODO make this a sql constant
-			String newUserSql = "INSERT INTO users (org_id, email, firstname, "
-					+ "lastname, user_role, user_creation) VALUES (?,?,?,?,?,?);";
+			String newUserSql = SQLConstants.CREATE_NEW_USER;
 			Object[] newUserParams =
 					{ orgId, email, firstName, lastName, role, new java.util.Date() };
 			this.execute(newUserSql, newUserParams);
@@ -69,7 +69,7 @@ public class UserHelper extends DatabaseHelper {
 		Map<String, Object> res = null;
 
 		// TODO make this a sql constant
-		String findSql = "SELECT * FROM users WHERE email=?;";
+		String findSql = SQLConstants.SELECT_USERS_BY_EMAIL;
 		String[] params = { email };
 		List<Map<String, Object>> dbRes = this.query(findSql, params);
 		if (dbRes != null && dbRes.size() == 1) {
@@ -97,7 +97,7 @@ public class UserHelper extends DatabaseHelper {
 		Map<String, Object> res = null;
 
 		// TODO make this a sql constant
-		String findSql = "SELECT * FROM users WHERE user_id=?;";
+		String findSql = SQLConstants.SELECT_USERS_BY_USER_ID;
 		Long[] params = { userId };
 		List<Map<String, Object>> dbRes = this.query(findSql, params);
 		if (dbRes != null && dbRes.size() == 1) {

@@ -2,6 +2,7 @@ package com.slicetree.db.beans.accessbeans;
 
 import java.util.Map;
 
+import com.slicetree.common.constants.SQLConstants;
 import com.slicetree.common.logging.LogLevel;
 import com.slicetree.common.logging.LoggingHelper;
 import com.slicetree.db.helpers.UserHelper;
@@ -92,8 +93,7 @@ public class UserAccessBean extends SliceTreeAccessBean {
 		logger.entering(CLASSNAME, METHODNAME);
 
 		if (this.userId != null) {
-			String commitSql = "UPDATE users SET org_id=?,email=?,firstname=?,"
-					+ "lastname=?,user_role=? WHERE user_id=?;";
+			String commitSql = SQLConstants.UPDATE_USER_INFO_BY_USER_ID;
 			Object[] commitParams = { orgId, email, firstName, lastName, userRole, userId };
 
 			try {
