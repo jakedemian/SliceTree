@@ -1,6 +1,0 @@
-<Context>
-	<Resource name="jdbc/slicetree_local_db" auth="Container" type="javax.sql.DataSource" 
-	maxActive="20" maxIdle="5" maxWait="10000" username="phpstorm" password="passw0rd" 
-	driverClassName="com.mysql.jdbc.Driver" 
-	url="jdbc:mysql://localhost:3306/slicetree_local_db"  />
-</Context>
