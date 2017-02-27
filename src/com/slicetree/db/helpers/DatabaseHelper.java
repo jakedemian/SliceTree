@@ -9,12 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.slicetree.common.config.SliceTreeConfigPropertiesHelper;
 import com.slicetree.common.logging.LogLevel;
 import com.slicetree.common.logging.LoggingHelper;
 
@@ -23,7 +25,6 @@ public class DatabaseHelper {
 	private Connection conn = null;
 	private LoggingHelper logger = new LoggingHelper();
 
-	@Resource(name = "jdbc/slicetree_local_db")
 	private DataSource dataSource;
 
 	/**
@@ -166,17 +167,31 @@ public class DatabaseHelper {
 	private void establishConnection() throws SQLException, NamingException {
 		final String METHODNAME = "establishConnection";
 
+		// TODO FIXME temporarily removed the @Resource from above becasue it
+		// wasn't working
+
+		String jdbcDatabaseName = null;
+		try {
+			SliceTreeConfigPropertiesHelper configProps = new SliceTreeConfigPropertiesHelper();
+			jdbcDatabaseName = configProps.get("db_name");
+		} catch (Throwable e) {
+			throw new NamingException("There was a problem loading some database configurations.");
+		}
+
 		if (dataSource != null) {
 			conn = dataSource.getConnection();
-		} else {
+		} else if (StringUtils.isNotBlank(jdbcDatabaseName)) {
 			// TODO why isn't the @resource thing working?
 			logger.log(LogLevel.ALL, CLASSNAME, METHODNAME,
 					"Member variable 'dataSource' was null.  Attempting to lazy load.");
 
 			Context initCtx = new InitialContext();
 			Context envCtx = (Context) initCtx.lookup("java:comp/env");
-			dataSource = (DataSource) envCtx.lookup("jdbc/slicetree_local_db");
+			dataSource = (DataSource) envCtx.lookup(jdbcDatabaseName);
 			conn = dataSource.getConnection();
+		} else {
+			throw new NamingException(
+					"There was a problem establishing a connection to the database.");
 		}
 	}
 
