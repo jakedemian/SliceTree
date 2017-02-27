@@ -58,3 +58,4 @@ local.properties
 
 DeploymentSteps.txt
 .sass-cache/
+config.properties
