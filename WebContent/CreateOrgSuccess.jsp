@@ -7,21 +7,14 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" type="text/css" href="./assets/css/main.css">
-	<title>Dashboard</title>
+	<title>Success</title>
 </head>
 <body>
 	<c:import url="./Header.jsp" />		
-	<h1>Dashboard</h1>
+	<h1><c:out value="${ orgName }" /> created!</h1>
+	<p>You have successfully created your organization: <c:out value="${ orgName }" /></p>
 	
-	<c:choose>
-		<c:when test="${ empty orgId or orgId == -1 }">
-			You don't currently belong to an organization.  <br />  
-			You can either <a href="CreateOrganization">create an organization</a>, 
-			or request to <a href="#">join an organization</a>. 
-		</c:when>
-		<c:otherwise>
-			you have an org! now load projects/tasks for this org
-		</c:otherwise>
-	</c:choose>
+	<br />
+	To get started creating projects and tasks, go to your <a href="Dashboard">Dashboard</a>.	
 </body>
 </html>

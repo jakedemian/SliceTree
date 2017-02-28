@@ -16,7 +16,7 @@
 	<c:choose>
 		<c:when test="${ empty orgId or orgId == -1 }">
 			You don't currently belong to an organization.   <br />
-			You can either <a href="#">create an organization</a>, 
+			You can either <a href="CreateOrganization">create an organization</a>, 
 			or request to <a href="#">join an organization</a>. 
 		</c:when>
 		<c:otherwise>

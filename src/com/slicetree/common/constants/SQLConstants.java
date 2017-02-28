@@ -29,4 +29,16 @@ public class SQLConstants {
 
 	public static final String SELECT_USER_CREDENTIALS_BY_EMAIL =
 			"SELECT * FROM usercredentials WHERE email=?;";
+
+	/**
+	 * ORGANIZATIONS
+	 */
+	public static final String CREATE_NEW_ORGANIZATION =
+			"INSERT INTO orgs (org_name, org_type, org_master_id, org_creation) VALUES (?,?,?,?);";
+
+	public static final String SELECT_ORG_BY_MASTER_USER_ID =
+			"SELECT * FROM orgs WHERE org_master_id=?;";
+
+	public static final String SELECT_ORG_BY_ORG_ID = "SELECT * FROM orgs WHERE org_id=?;";
+
 }
