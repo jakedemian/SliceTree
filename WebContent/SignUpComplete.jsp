@@ -1,28 +1,46 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@include file="./EnvironmentSetup.jspf" %>
+
+<c:set var="NO_ORG_MSG_BLOCK">
+	<fmt:message key="SUC_NO_ORG_MSG" />  <br />
+	<c:set var="createOrgLink">
+		<a href="CreateOrganization"><fmt:message key="SUC_LINK_CREATE_ORG" /></a>
+	</c:set>
+	<c:set var="joinOrgLink">
+		<a href="#"><fmt:message key="SUC_LINK_JOIN_ORG" /></a>
+	</c:set>
+	<fmt:message key="SUC_NO_ORG_OPTIONS_MSG" >
+		<fmt:param value="${ createOrgLink }" />
+		<fmt:param value="${ joinOrgLink }" />
+	</fmt:message>
+</c:set>
 
 <!DOCTYPE html>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" type="text/css" href="./assets/css/main.css">
-	<title>Setup Complete</title>
+	<title><fmt:message key="SUC_TITLE" /></title>
 </head>
 <body>
 	<c:import url="./Header.jsp" />		
-	<h1>You're all set, <c:out value="${ firstName }" />!</h1>
+	<h1>
+		<fmt:message key="SUC_MAIN_MESSAGE">
+			<fmt:param value="${ firstName }" />
+		</fmt:message>		
+	</h1>
 	
 	<c:choose>
 		<c:when test="${ empty orgId or orgId == -1 }">
-			You don't currently belong to an organization.   <br />
-			You can either <a href="CreateOrganization">create an organization</a>, 
-			or request to <a href="#">join an organization</a>. 
+			<c:out value="${ NO_ORG_MSG_BLOCK }" escapeXml="false" />
 		</c:when>
 		<c:otherwise>
-			Looks like your organization {get org name in servlet and insert it here} is ready for you!
-			
-			<a href="Dashboard">Go to My Dashboard</a>
+			<fmt:message key="SUC_ORG_IS_READY">
+				<fmt:param value="{TODO!!! ACTUALLY GET THE ORG NAME AND PUT IT HERE!}" />
+			</fmt:message>			
+			<a href="Dashboard"><fmt:message key="SUC_GO_TO_DASHBOARD" /></a>
 		</c:otherwise>
 	</c:choose>
 	

@@ -60,3 +60,4 @@ DeploymentSteps.txt
 .sass-cache/
 config.properties
 context.xml
+.DS_Store
